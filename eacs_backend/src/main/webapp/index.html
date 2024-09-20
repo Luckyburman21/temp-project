@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Page</title>
+    <script>
+        // Function to fetch plain text data
+        function fetchData() {
+            fetch('http://localhost:8080/eacs/gettotalpresentemp') // Ensure this URL is correct
+                .then(response => response.text())
+                .then(data => {
+                    data.forEach((curr) => {
+                        console.log(curr.employee_id);
+                    })
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        async function fetchListData() {
+            alert("function called");
+            const res = await fetch('/eacs/gettotalemployee') // Ensure this URL is correct
+            if (res) {
+                alert("got res");
+                var list = await res.json();
+                list.forEach((curr) => {
+                    console.log(curr);
+                })
+
+
+                const responseDiv = document.getElementById('response');
+                responseDiv.innerHTML = ''; // Clear any existing content
+                const ul = document.createElement('ul'); // Create a <ul> element
+
+
+                list.forEach(obj => {
+
+                    const li = document.createElement('li'); // Create a <li> element
+                    li.innerText = `ID:-${obj.employee_id} Name ${obj.first_name}`; // Set the text to obj.first_name
+                    ul.appendChild(li); // Append <li> to <ul>
+                });
+                responseDiv.appendChild(ul); // A
+            }
+
+
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fetchListButton').addEventListener('click', fetchListData);
+        });
+
+        // Function to fetch JSON data
+        function fetchJsonData() {
+            fetch('http://localhost:8080/eacs/rest/endpoint') // Ensure this URL is correct
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('response').innerText = JSON.stringify(data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+
+        async function getclustedata() {
+            const cluster_id = 102;
+            try {
+                const res = await fetch("http://localhost:8080/eacs/post", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ cluster_id }),
+
+                });
+                alert("req send")
+                if (res) {
+                    alert("res come")
+                    const data = await res.json();
+                    const myres = JSON.stringify(data);
+                    console.log(data);
+                    document.getElementById('response').innerText = myres;
+                } else {
+                    console.log("res not found");
+                }
+            } catch (err) {
+                console.error(err);
+            }
+
+        }
+
+        async function getpresetemp() {
+            const curr_date = "2019-04-30";
+            try {
+                const res = await fetch('/eacs/test', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    body: JSON.stringify({ curr_date })
+                });
+                if (res) { // check if the response is okay
+                    const data = await res.json();
+
+                    console.log(data);
+
+                    // setPresentemp(new_data);
+
+
+                } else {
+                    console.log('Failed to fetch data:', res.status, res.statusText);
+                }
+            } catch (error) {
+                console.log('Error fetching data:', error);
+            }
+
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('fetchDataButton').addEventListener('click', fetchData);
+            document.getElementById('fetchJsonButton').addEventListener('click', fetchJsonData);
+            document.getElementById('fetchpost').addEventListener('click', getclustedata);
+            document.getElementById('test').addEventListener('click', getpresetemp);
+        });
+    </script>
+</head>
+
+<body>
+    <h1>Deployment Successful!</h1>
+    <button id="fetchDataButton">Fetch Plain Text Data</button>
+    <button id="fetchJsonButton">Fetch JSON Data</button>
+    <button id="fetchListButton">Fetch List Data</button>
+    <button id="fetchpost">Fetch POST Data</button>
+    <button id="test">TEST</button>
+    <div id="response"></div>
+</body>
+
+</html>

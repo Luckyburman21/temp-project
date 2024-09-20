@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'war' // Apply the WAR plugin
+}
+
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+    maven { url "https://repository.jboss.org/nexus/content/groups/public/" }
+}
+
+dependencies {
+    implementation 'javax.servlet:javax.servlet-api:3.1.0'
+    implementation 'io.undertow:undertow-core:2.0.30.Final'
+    implementation 'io.undertow:undertow-servlet:2.0.30.Final'
+    testImplementation 'junit:junit:4.13.2'
+}
+
+// Configure the WAR plugin
+war {
+    // Customize the name of the WAR file
+    archiveFileName = 'eacs_backend.war'
+    // Set the directory for web resources
+    webAppDirName = 'src/main/webapp'
+}
+
+// Copy resources task to include web resources
+task copyResources(type: Copy) {
+    from 'src/main/webapp'
+    into "$buildDir/resources/main"
+}
+
+// Ensure the copyResources task runs before creating the WAR file
+war.dependsOn copyResources
